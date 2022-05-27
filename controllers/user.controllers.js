@@ -22,7 +22,9 @@ const createUser = async (req, res, next) => {
 			message: "User Created Successfully",
 		})
 	} catch (error) {
-		console.log(error)
+		return res.status(404).json({
+			message: error.message,
+		})
 	}
 }
 
