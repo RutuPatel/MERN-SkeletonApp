@@ -1,3 +1,5 @@
+import config from './../config/config.js'
+import jsonwebtoken from 'jsonwebtoken'
 import User from './../models/user.models.js'
 
 const signIn = async(req, res) => {
@@ -19,10 +21,16 @@ const signIn = async(req, res) => {
                 })
             )
         }
-
+        const token  = jsonwebtoken.sign({_id:user._id}, config.jwtSecret)
+        res.cookie('authtoken', token)
         return (
             res.status(200).json({
-                message: user.name + " you have successfully signed in"
+                token,
+                user: {
+                    _id: user._id,
+                    email: user.email,
+                    name: user.name
+                }
             })
         )
     } catch (error) {
@@ -33,7 +41,12 @@ const signIn = async(req, res) => {
 
 const signOut = (req, res) => {
     try {
-        
+        res.clearCookie("authtoken")
+        return (
+            res.status(200).json({
+                message:"Sign out"
+            })
+        )
     } catch (error) {
         res.send(error)
     }
